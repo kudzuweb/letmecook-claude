@@ -1,0 +1,37 @@
+{
+  "expo": {
+    "name": "PantryPal",
+    "slug": "pantrypal",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "scheme": "pantrypal",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FEFAF6"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.pantrypal.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FEFAF6"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.pantrypal.app"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-web-browser"
+    ]
+  }
+}

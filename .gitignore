@@ -1,0 +1,15 @@
+node_modules/
+venv/
+__pycache__/
+.env
+*.pyc
+.expo/
+dist/
+.DS_Store
+*.egg-info/
+.pytest_cache/
+*.log
+ios/
+android/
+.env.local
+planning/
