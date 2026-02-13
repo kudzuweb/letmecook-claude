@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Crypto from 'expo-crypto';
 import * as api from './api';
+import { initPurchases, checkSubscription } from './purchases';
 
 const DEFAULT_STAPLES = ['salt', 'pepper', 'olive oil', 'butter', 'garlic', 'onion', 'sugar', 'flour', 'eggs'];
 const DEFAULT_TOOLS = ['oven', 'stovetop', 'knife', 'cutting board', 'whisk', 'mixing bowls', 'baking sheet', 'saucepan', 'skillet'];
@@ -37,6 +38,12 @@ export const useStore = create((set, get) => ({
 
     set({ userId, isJudge });
 
+    try { await initPurchases(userId); } catch {}
+    try {
+      const isPro = await checkSubscription();
+      set({ isPro });
+    } catch {}
+
     if (!hasInitedPantry) {
       for (const name of DEFAULT_STAPLES) {
         try { await api.addPantryItem(userId, name, 'staple'); } catch {}
@@ -59,6 +66,13 @@ export const useStore = create((set, get) => ({
   setIsJudge: async (val) => {
     await AsyncStorage.setItem('isJudge', JSON.stringify(val));
     set({ isJudge: val });
+  },
+
+  refreshProStatus: async () => {
+    try {
+      const isPro = await checkSubscription();
+      set({ isPro });
+    } catch {}
   },
 
   refreshRecipes: async () => {
