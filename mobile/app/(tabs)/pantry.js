@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { View, Text, TextInput, FlatList, StyleSheet, TouchableOpacity, RefreshControl } from 'react-native';
+import { View, Text, TextInput, FlatList, StyleSheet, TouchableOpacity, RefreshControl, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { X } from 'lucide-react-native';
 import { colors, fonts, spacing, radius } from '../../lib/theme';
@@ -45,48 +45,50 @@ export default function PantryScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <Text style={styles.title}>Pantry</Text>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={90}>
+        <Text style={styles.title}>Pantry</Text>
 
-      <View style={styles.segmentedControl}>
-        {TABS.map(tab => (
-          <TouchableOpacity
-            key={tab.key}
-            style={[styles.segment, activeTab === tab.key && styles.segmentActive]}
-            onPress={() => setActiveTab(tab.key)}
-          >
-            <Text style={[styles.segmentText, activeTab === tab.key && styles.segmentTextActive]}>
-              {tab.label}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+        <View style={styles.segmentedControl}>
+          {TABS.map(tab => (
+            <TouchableOpacity
+              key={tab.key}
+              style={[styles.segment, activeTab === tab.key && styles.segmentActive]}
+              onPress={() => setActiveTab(tab.key)}
+            >
+              <Text style={[styles.segmentText, activeTab === tab.key && styles.segmentTextActive]}>
+                {tab.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
 
-      <Text style={styles.hint}>{currentTabInfo?.hint}</Text>
+        <Text style={styles.hint}>{currentTabInfo?.hint}</Text>
 
-      <FlatList
-        data={items}
-        renderItem={renderChip}
-        keyExtractor={item => item.id}
-        numColumns={3}
-        columnWrapperStyle={styles.chipRow}
-        contentContainerStyle={styles.chipList}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.accent} />}
-      />
-
-      <View style={styles.inputRow}>
-        <TextInput
-          style={styles.input}
-          placeholder={`Add ${activeTab === 'tools' ? 'tool' : 'item'}...`}
-          placeholderTextColor={colors.textSecondary}
-          value={inputValue}
-          onChangeText={setInputValue}
-          onSubmitEditing={handleAdd}
-          returnKeyType="done"
+        <FlatList
+          data={items}
+          renderItem={renderChip}
+          keyExtractor={item => item.id}
+          numColumns={3}
+          columnWrapperStyle={styles.chipRow}
+          contentContainerStyle={styles.chipList}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.accent} />}
         />
-        <TouchableOpacity style={styles.addButton} onPress={handleAdd} disabled={!inputValue.trim()}>
-          <Text style={styles.addButtonText}>Add</Text>
-        </TouchableOpacity>
-      </View>
+
+        <View style={styles.inputRow}>
+          <TextInput
+            style={styles.input}
+            placeholder={`Add ${activeTab === 'tools' ? 'tool' : 'item'}...`}
+            placeholderTextColor={colors.textSecondary}
+            value={inputValue}
+            onChangeText={setInputValue}
+            onSubmitEditing={handleAdd}
+            returnKeyType="done"
+          />
+          <TouchableOpacity style={[styles.addButton, !inputValue.trim() && styles.addButtonDisabled]} onPress={handleAdd} disabled={!inputValue.trim()}>
+            <Text style={styles.addButtonText}>Add</Text>
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -134,4 +136,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20, justifyContent: 'center',
   },
   addButtonText: { fontFamily: fonts.bodyBold, fontSize: 14, color: '#fff' },
+  addButtonDisabled: { opacity: 0.5 },
 });

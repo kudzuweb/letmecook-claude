@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { FlatList, Text, StyleSheet, RefreshControl } from 'react-native';
+import { FlatList, Text, StyleSheet, RefreshControl, ActivityIndicator, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from 'expo-router';
 import { colors, fonts, spacing } from '../../lib/theme';
@@ -13,12 +13,14 @@ export default function ChannelBrowseScreen() {
   const { userId, recipes: userRecipes, refreshRecipes } = useStore();
   const [channelRecipes, setChannelRecipes] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const loadRecipes = useCallback(async () => {
     try {
       const data = await api.getRecipes({ channel_id: id, limit: 100 });
       setChannelRecipes(data.recipes || []);
     } catch {}
+    setLoading(false);
   }, [id]);
 
   useEffect(() => { loadRecipes(); }, [loadRecipes]);
@@ -35,6 +37,12 @@ export default function ChannelBrowseScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScreenHeader title="Browse Recipes" />
+      {loading ? (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <ActivityIndicator size="large" color={colors.accent} />
+        </View>
+      ) : (
+      <>
       <Text style={styles.count}>{channelRecipes.length} recipes</Text>
       <FlatList
         data={channelRecipes}
@@ -49,6 +57,8 @@ export default function ChannelBrowseScreen() {
         contentContainerStyle={styles.listContent}
         refreshControl={<RefreshControl refreshing={refreshing} tintColor={colors.accent} />}
       />
+      </>
+      )}
     </SafeAreaView>
   );
 }

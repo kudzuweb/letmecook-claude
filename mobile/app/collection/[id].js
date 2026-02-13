@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { FlatList, StyleSheet, RefreshControl } from 'react-native';
+import { FlatList, StyleSheet, RefreshControl, ActivityIndicator, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from 'expo-router';
 import { colors, spacing } from '../../lib/theme';
@@ -14,6 +14,7 @@ export default function CollectionScreen() {
   const { userId, collections } = useStore();
   const [recipes, setRecipes] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const collection = collections.find(c => c.id === id);
   const title = collection?.name || 'Collection';
@@ -23,6 +24,7 @@ export default function CollectionScreen() {
       const data = await api.getCollectionRecipes(userId, id);
       setRecipes(data.recipes || []);
     } catch {}
+    setLoading(false);
   }, [userId, id]);
 
   useEffect(() => { loadRecipes(); }, [loadRecipes]);
@@ -36,7 +38,11 @@ export default function CollectionScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScreenHeader title={title} />
-      {recipes.length === 0 ? (
+      {loading ? (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <ActivityIndicator size="large" color={colors.accent} />
+        </View>
+      ) : recipes.length === 0 ? (
         <EmptyState message="No recipes in this collection yet" />
       ) : (
         <FlatList
