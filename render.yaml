@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: pantrypal-api
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_KEY
+        sync: false
+      - key: YOUTUBE_API_KEY
+        sync: false
+    healthCheckPath: /health
+    plan: free
