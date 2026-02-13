@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, RefreshControl } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, RefreshControl, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Plus, Folder } from 'lucide-react-native';
@@ -12,9 +12,7 @@ export default function RecipesScreen() {
   const router = useRouter();
   const [view, setView] = useState('library');
   const [refreshing, setRefreshing] = useState(false);
-  const { recipes, collections, matches, initialize, refreshRecipes, refreshMatches, refreshCollections } = useStore();
-
-  useEffect(() => { initialize(); }, []);
+  const { recipes, collections, matches, refreshRecipes, refreshMatches, refreshCollections } = useStore();
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -41,7 +39,7 @@ export default function RecipesScreen() {
         {(item.thumbnails || []).slice(0, 4).map((url, i) => (
           <View key={i} style={styles.collectionThumb}>
             {url ? (
-              <View style={[styles.thumbPlaceholder, { backgroundColor: colors.chipBg }]} />
+              <Image source={{ uri: url }} style={styles.thumbPlaceholder} />
             ) : (
               <View style={[styles.thumbPlaceholder, { backgroundColor: colors.chipBg }]} />
             )}

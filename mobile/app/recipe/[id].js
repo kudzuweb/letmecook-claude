@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Star, Check, X, Lightbulb, ExternalLink, Wrench, AlertTriangle, PenLine, Share2 } from 'lucide-react-native';
 import { useLocalSearchParams } from 'expo-router';
@@ -28,7 +28,14 @@ export default function RecipeDetail() {
     }
   }, [id, recipes]);
 
-  if (!recipe) return null;
+  if (!recipe) return (
+    <SafeAreaView style={styles.container} edges={['top']}>
+      <ScreenHeader title="Recipe" />
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color={colors.accent} />
+      </View>
+    </SafeAreaView>
+  );
 
   const allPantryItems = [
     ...(pantry.staples || []).map(i => i.name.toLowerCase()),
