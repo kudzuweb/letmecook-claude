@@ -3,6 +3,7 @@ import logging
 from typing import Optional
 
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field, field_validator
 from slowapi import Limiter
@@ -27,6 +28,12 @@ logger = logging.getLogger(__name__)
 limiter = Limiter(key_func=get_remote_address)
 app = FastAPI(title="PantryPal API", version="1.0.0")
 app.state.limiter = limiter
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.exception_handler(RateLimitExceeded)
